@@ -7,9 +7,6 @@ mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-# TODO: fix the key used in landmarks and denormalized dict: frame_i
-
-
 def get_pose_detector(static_image_mode=False, model_complexity=1, smooth_landmarks=True, enable_segmentation=False, smooth_segmentation=True, min_detection_confidence=0.5, min_tracking_confidence=0.5):
     pose_detector = mp.solutions.pose.Pose(
         static_image_mode=static_image_mode,
@@ -22,15 +19,15 @@ def get_pose_detector(static_image_mode=False, model_complexity=1, smooth_landma
     return pose_detector
 
 
-def plot_pose_landmarks(frame: np.array, pose_landmarks, frame_width, frame_height):
+def plot_pose_landmarks(frame: np.array, frame_num, pose_landmarks, frame_width, frame_height):
     landmarks = {}
     denormalized = {}
 
     for i in range(33):
-        landmarks[f'frame_i_{i}_x'] = 0
-        landmarks[f'frame_i_{i}_y'] = 0
-        denormalized[f'frame_i_{i}_x'] = 0
-        denormalized[f'frame_i_{i}_y'] = 0
+        landmarks[f'frame_{frame_num}_{i}_x'] = 0
+        landmarks[f'frame_{frame_num}_{i}_y'] = 0
+        denormalized[f'frame_{frame_num}_{i}_x'] = 0
+        denormalized[f'frame_{frame_num}_{i}_y'] = 0
     
     mp_drawing.draw_landmarks(
         frame,
@@ -46,23 +43,30 @@ def plot_pose_landmarks(frame: np.array, pose_landmarks, frame_width, frame_heig
         for i in range(len(landmark_dict['landmark'])):
             x, y = round(landmark_dict['landmark'][i]['x'], 3), round(landmark_dict['landmark'][i]['y'], 3)
             
-            landmarks[f'frame_i_{i}_x'] = x
-            landmarks[f'frame_i_{i}_y'] = y
+            landmarks[f'frame_{frame_num}_{i}_x'] = x
+            landmarks[f'frame_{frame_num}_{i}_y'] = y
 
             if x>1 or y>1:
                 x = y = 0
             denormalized_coordinate = denormalize_coordinates(abs(x), abs(y), frame_width, frame_height)
-            denormalized[f'frame_i_{i}_x'] = denormalized_coordinate[0]
-            denormalized[f'frame_i_{i}_y'] = denormalized_coordinate[1]
+            denormalized[f'frame_{frame_num}_{i}_x'] = denormalized_coordinate[0]
+            denormalized[f'frame_{frame_num}_{i}_y'] = denormalized_coordinate[1]
 
     # print(landmarks, denormalized)
 
     return frame, landmarks, denormalized
 
+header = ['index']
+for i in range(33):
+    header.append(f'landmark_{i}_x')
+    header.append(f'landmark_{i}_y')
 
 class MediapipePose:
     def __init__(self):
         self.pose = get_pose_detector()
+        self.frame_num = 1
+        self.landmarks = [header]
+        self.denormalized_landmarks = [header]
 
     def process(self, frame: np.array):
 
@@ -85,6 +89,25 @@ class MediapipePose:
         denormalized_landmarks = None
 
         if pose_results:
-            frame = plot_pose_landmarks(frame, pose_results.pose_landmarks, frame_w, frame_h)
+            frame, landmarks, denormalized_landmarks = plot_pose_landmarks(frame, self.frame_num, pose_results.pose_landmarks, frame_w, frame_h)
+            self.frame_num += 1
+
+            self.landmarks.append(list(landmarks.values()))
+            self.denormalized_landmarks.append(list(denormalized_landmarks.values()))
 
         return frame
+    
+    def save(self, filename='test'):
+
+        f = open(f'{filename}.csv', "w")
+        for i in range(len(self.landmarks)):
+            prefix = f'{i},' if i!=0 else ''
+            f.write(f'{prefix}{",".join(str(l) for l in self.landmarks[i])}\n')
+        f.close()
+        
+        f = open(f'{filename}_denormalized.csv', "w")
+        for i in range(len(self.denormalized_landmarks)):
+            prefix = f'{i},' if i!=0 else ''
+            f.write(f'{prefix}{",".join(str(l) for l in self.denormalized_landmarks[i])}\n')
+        f.close()
+

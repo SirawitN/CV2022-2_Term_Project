@@ -6,9 +6,6 @@ import mediapipe as mp
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 
-# TODO: fix the key used in landmarks and denormalized dict: frame_i
-
-
 def get_hand_detector(static_image_mode=False, max_num_hands=2, model_complexity=0, min_detection_confidence=0.5, min_tracking_confidence=0.5):
     hand_detector = mp.solutions.hands.Hands(
         static_image_mode=static_image_mode,
@@ -19,20 +16,20 @@ def get_hand_detector(static_image_mode=False, max_num_hands=2, model_complexity
     return hand_detector
 
 
-def plot_hand_landmarks(frame: np.array, hand_landmarks, frame_width, frame_height):
+def plot_hand_landmarks(frame: np.array, frame_num, hand_landmarks, frame_width, frame_height):
     landmarks = {}
     denormalized = {}
 
     for i in range(1, 22):
-        landmarks[f'frame_i_left_{i}_x'] = 0
-        landmarks[f'frame_i_left_{i}_y'] = 0
-        denormalized[f'frame_i_left_{i}_x'] = 0
-        denormalized[f'frame_i_left_{i}_y'] = 0
+        landmarks[f'frame_{frame_num}_left_{i}_x'] = 0
+        landmarks[f'frame_{frame_num}_left_{i}_y'] = 0
+        denormalized[f'frame_{frame_num}_left_{i}_x'] = 0
+        denormalized[f'frame_{frame_num}_left_{i}_y'] = 0
     for i in range(1, 22):
-        landmarks[f'frame_i_right_{i}_x'] = 0
-        landmarks[f'frame_i_right_{i}_y'] = 0
-        denormalized[f'frame_i_right_{i}_x'] = 0
-        denormalized[f'frame_i_right_{i}_y'] = 0
+        landmarks[f'frame_{frame_num}_right_{i}_x'] = 0
+        landmarks[f'frame_{frame_num}_right_{i}_y'] = 0
+        denormalized[f'frame_{frame_num}_right_{i}_x'] = 0
+        denormalized[f'frame_{frame_num}_right_{i}_y'] = 0
 
     for landmark in hand_landmarks:
         landmark_dict = MessageToDict(landmark)
@@ -41,23 +38,39 @@ def plot_hand_landmarks(frame: np.array, hand_landmarks, frame_width, frame_heig
         for j in range(1, 22):
             x, y = round(landmark_dict['landmark'][j-1]['x'],
                          3), round(landmark_dict['landmark'][j-1]['y'], 3)
-            landmarks[f'frame_i_{side}_{j}_x'] = x
-            landmarks[f'frame_i_{side}_{j}_y'] = y
+            landmarks[f'frame_{frame_num}_{side}_{j}_x'] = x
+            landmarks[f'frame_{frame_num}_{side}_{j}_y'] = y
+
+            if x>1 or y>1:
+                x = y = 0
 
             denormalized_coordinate = denormalize_coordinates(
                 abs(x), abs(y), frame_width, frame_height)
-            denormalized[f'frame_i_{side}_{j}_x'] = denormalized_coordinate[0]
-            denormalized[f'frame_i_{side}_{j}_y'] = denormalized_coordinate[1]
+            
+            print(x, y, denormalized_coordinate)
+            denormalized[f'frame_{frame_num}_{side}_{j}_x'] = denormalized_coordinate[0]
+            denormalized[f'frame_{frame_num}_{side}_{j}_y'] = denormalized_coordinate[1]
 
         mp_drawing.draw_landmarks(frame, landmark, mp_hands.HAND_CONNECTIONS)
 
     return frame, landmarks, denormalized
+
+header = ['index']
+for i in range(21):
+    header.append(f'landmark_left_{i}_x')
+    header.append(f'landmark_left_{i}_y')
+for i in range(21):
+    header.append(f'landmark_right_{i}_x')
+    header.append(f'landmark_right_{i}_y')
 
 
 class MediapipeHand:
 
     def __init__(self):
         self.hand = get_hand_detector()
+        self.frame_num = 1
+        self.landmarks = [header]
+        self.denormalized_landmarks = [header]
 
     def process(self, frame: np.array):
 
@@ -83,7 +96,11 @@ class MediapipeHand:
 
         if hand_results.multi_hand_landmarks:
             frame, landmarks, denormalized_landmarks = plot_hand_landmarks(
-                frame, hand_results.multi_hand_landmarks, frame_w, frame_h)
+                frame, self.frame_num, hand_results.multi_hand_landmarks, frame_w, frame_h)
+            self.frame_num += 1
+
+            self.landmarks.append(list(landmarks.values()))
+            self.denormalized_landmarks.append(list(denormalized_landmarks.values()))
 
         # if hand_results.multi_handedness:
         #     # for handedness in hand_results.multi_handedness:
@@ -94,4 +111,18 @@ class MediapipeHand:
         #         # print(handedness['index'], handedness['score'])
         #         print(len(hand_results.multi_hand_landmarks))
 
-        return frame, landmarks, denormalized_landmarks
+        return frame
+    
+    def save(self, filename='test'):
+
+        f = open(f'{filename}.csv', "w")
+        for i in range(len(self.landmarks)):
+            prefix = f'{i},' if i!=0 else ''
+            f.write(f'{prefix}{",".join(str(l) for l in self.landmarks[i])}\n')
+        f.close()
+        
+        f = open(f'{filename}_denormalized.csv', "w")
+        for i in range(len(self.denormalized_landmarks)):
+            prefix = f'{i},' if i!=0 else ''
+            f.write(f'{prefix}{",".join(str(l) for l in self.denormalized_landmarks[i])}\n')
+        f.close()

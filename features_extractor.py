@@ -1,12 +1,13 @@
 import cv2
 import time
 import imutils
+import numpy as np
 from hand_detection import MediapipeHand
 from pose_detection import MediapipePose
 # from imutils.video import VideoStream
 
-# img_in = '2566.0520.mp4'
-img_in = 0
+img_in = './resources/2566.0520.mp4'
+# img_in = 0
 
 cap = cv2.VideoCapture(img_in)
 hand_detector = MediapipeHand()
@@ -21,9 +22,9 @@ pose_detector = MediapipePose()
 # fps = cap.get(cv2.CAP_PROP_FPS)
 # interval = int(1000/fps)
 
-frames = 0
-landmarks = []
-denormalized_landmarks = []
+frames = 1
+# landmarks = []
+# denormalized_landmarks = []
 
 if cap:
     while cap.isOpened():
@@ -38,9 +39,9 @@ if cap:
             # prev_frame_time = new_frame_time
             # image = imutils.resize(image, height=240)
             
-            # processed_frame, processed_landmarks, processed_denormalized = hand_detector.process(image)
+            processed_frame = hand_detector.process(image)
             
-            processed_frame, processed_landmarks, processed_denormalized = pose_detector.process(image)
+            # processed_frame = pose_detector.process(image)
 
             # if processed_landmarks is not None:
             #     landmarks.append(list(processed_landmarks.values()))
@@ -61,13 +62,19 @@ if cap:
                 break
         else:
             # print(f'no video, Frames = {frames}, landmarks = {len(landmarks)}')
-            # break
-            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            continue
+            break
+            # cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            # continue
+
 
     cap.release()
     cv2.destroyAllWindows()
 
+
 else:
     print("[Error]: Cannot open a video with the given path. Please try again.")
+
+hand_detector.save()
+# pose_detector.save()
+
 
