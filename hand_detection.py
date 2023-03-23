@@ -1,6 +1,6 @@
 from mediapipe.python.solutions.drawing_utils import _normalized_to_pixel_coordinates as denormalize_coordinates
 from google.protobuf.json_format import MessageToDict
-import cv2
+import cv2, os
 import numpy as np
 import mediapipe as mp
 mp_hands = mp.solutions.hands
@@ -47,7 +47,7 @@ def plot_hand_landmarks(frame: np.array, frame_num, hand_landmarks, frame_width,
             denormalized_coordinate = denormalize_coordinates(
                 abs(x), abs(y), frame_width, frame_height)
             
-            print(x, y, denormalized_coordinate)
+            # print(x, y, denormalized_coordinate)
             denormalized[f'frame_{frame_num}_{side}_{j}_x'] = denormalized_coordinate[0]
             denormalized[f'frame_{frame_num}_{side}_{j}_y'] = denormalized_coordinate[1]
 
@@ -77,7 +77,7 @@ class MediapipeHand:
         # convert the frame into RGB Colorspace
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # horizontally flip the frame
-        frame = cv2.flip(frame, 1)
+        # frame = cv2.flip(frame, 1)
 
         frame.flags.writeable = False
         frame_h, frame_w, _ = frame.shape
@@ -95,6 +95,7 @@ class MediapipeHand:
         denormalized_landmarks = None
 
         if hand_results.multi_hand_landmarks:
+            # print(hand_results.multi_handedness)
             frame, landmarks, denormalized_landmarks = plot_hand_landmarks(
                 frame, self.frame_num, hand_results.multi_hand_landmarks, frame_w, frame_h)
             self.frame_num += 1
@@ -113,16 +114,24 @@ class MediapipeHand:
 
         return frame
     
-    def save(self, filename='test'):
+    def save(self, path='', filename='test'):
 
-        f = open(f'{filename}.csv', "w")
+        save_dir = os.path.join(path, f'{filename}.csv')
+        denormalized_save_dir = os.path.join(path, f'{filename}_denormalized.csv')
+        f = open(save_dir, "w")
         for i in range(len(self.landmarks)):
             prefix = f'{i},' if i!=0 else ''
             f.write(f'{prefix}{",".join(str(l) for l in self.landmarks[i])}\n')
         f.close()
         
-        f = open(f'{filename}_denormalized.csv', "w")
+        f = open(denormalized_save_dir, "w")
         for i in range(len(self.denormalized_landmarks)):
             prefix = f'{i},' if i!=0 else ''
             f.write(f'{prefix}{",".join(str(l) for l in self.denormalized_landmarks[i])}\n')
         f.close()
+
+    def clear_logs(self):
+        self.landmarks.clear()
+        self.denormalized_landmarks.clear()
+        self.landmarks = [header]
+        self.denormalized_landmarks = [header]
