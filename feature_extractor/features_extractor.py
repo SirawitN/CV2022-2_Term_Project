@@ -6,6 +6,16 @@ from hand_detection import MediapipeHand
 from pose_detection import MediapipePose
 # from imutils.video import VideoStream
 
+# Instraction: How to use this code
+# 1. Install all necessary modules, meidapipe, opencv
+# 2. Download videos from https://drive.google.com/drive/folders/1SSdPAg4gxv2S0PP7rEGp7awuVHKbTwO8?usp=sharing
+# 3. Create a 'resources' directory
+# 4. Extract the downloaded file and rename it to 'CompVisionDataset1'
+# 5. Put the 'CompVisionDataset1' in the 'resources' directory
+# 6. Finish
+
+# Examples of detected landmarks are in test.csv and test_denormalized.csv
+
 current_dir = os.getcwd()
 resource_dir = os.path.join(current_dir, 'resources', 'CompVisionDataset1')
 
