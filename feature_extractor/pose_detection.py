@@ -100,13 +100,14 @@ class MediapipePose:
     def save(self, path='', filename='test'):
 
         save_dir = os.path.join(path, f'{filename}.csv')
+        denormalized_save_dir = os.path.join(path, f'{filename}_denormalized.csv')
         f = open(save_dir, "w")
         for i in range(len(self.landmarks)):
             prefix = f'{i},' if i!=0 else ''
             f.write(f'{prefix}{",".join(str(l) for l in self.landmarks[i])}\n')
         f.close()
         
-        f = open(save_dir, "w")
+        f = open(denormalized_save_dir, "w")
         for i in range(len(self.denormalized_landmarks)):
             prefix = f'{i},' if i!=0 else ''
             f.write(f'{prefix}{",".join(str(l) for l in self.denormalized_landmarks[i])}\n')
