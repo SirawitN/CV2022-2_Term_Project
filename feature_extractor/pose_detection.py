@@ -43,11 +43,12 @@ def plot_pose_landmarks(frame: np.array, frame_num, pose_landmarks, frame_width,
         for i in range(len(landmark_dict['landmark'])):
             x, y = round(landmark_dict['landmark'][i]['x'], 3), round(landmark_dict['landmark'][i]['y'], 3)
             
+            if x>1 or y>1:
+                x = y = 0
+                
             landmarks[f'frame_{frame_num}_{i}_x'] = x
             landmarks[f'frame_{frame_num}_{i}_y'] = y
 
-            if x>1 or y>1:
-                x = y = 0
             denormalized_coordinate = denormalize_coordinates(abs(x), abs(y), frame_width, frame_height)
             denormalized[f'frame_{frame_num}_{i}_x'] = denormalized_coordinate[0]
             denormalized[f'frame_{frame_num}_{i}_y'] = denormalized_coordinate[1]

@@ -38,11 +38,12 @@ def plot_hand_landmarks(frame: np.array, frame_num, hand_landmarks, frame_width,
         for j in range(1, 22):
             x, y = round(landmark_dict['landmark'][j-1]['x'],
                          3), round(landmark_dict['landmark'][j-1]['y'], 3)
-            landmarks[f'frame_{frame_num}_{side}_{j}_x'] = x
-            landmarks[f'frame_{frame_num}_{side}_{j}_y'] = y
-
+            
             if x>1 or y>1:
                 x = y = 0
+
+            landmarks[f'frame_{frame_num}_{side}_{j}_x'] = x
+            landmarks[f'frame_{frame_num}_{side}_{j}_y'] = y
 
             denormalized_coordinate = denormalize_coordinates(
                 abs(x), abs(y), frame_width, frame_height)
