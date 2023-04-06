@@ -43,11 +43,12 @@ def plot_pose_landmarks(frame: np.array, frame_num, pose_landmarks, frame_width,
         for i in range(len(landmark_dict['landmark'])):
             x, y = round(landmark_dict['landmark'][i]['x'], 3), round(landmark_dict['landmark'][i]['y'], 3)
             
+            if x>1 or y>1:
+                x = y = 0
+                
             landmarks[f'frame_{frame_num}_{i}_x'] = x
             landmarks[f'frame_{frame_num}_{i}_y'] = y
 
-            if x>1 or y>1:
-                x = y = 0
             denormalized_coordinate = denormalize_coordinates(abs(x), abs(y), frame_width, frame_height)
             denormalized[f'frame_{frame_num}_{i}_x'] = denormalized_coordinate[0]
             denormalized[f'frame_{frame_num}_{i}_y'] = denormalized_coordinate[1]
@@ -100,13 +101,14 @@ class MediapipePose:
     def save(self, path='', filename='test'):
 
         save_dir = os.path.join(path, f'{filename}.csv')
+        denormalized_save_dir = os.path.join(path, f'{filename}_denormalized.csv')
         f = open(save_dir, "w")
         for i in range(len(self.landmarks)):
             prefix = f'{i},' if i!=0 else ''
             f.write(f'{prefix}{",".join(str(l) for l in self.landmarks[i])}\n')
         f.close()
         
-        f = open(save_dir, "w")
+        f = open(denormalized_save_dir, "w")
         for i in range(len(self.denormalized_landmarks)):
             prefix = f'{i},' if i!=0 else ''
             f.write(f'{prefix}{",".join(str(l) for l in self.denormalized_landmarks[i])}\n')
