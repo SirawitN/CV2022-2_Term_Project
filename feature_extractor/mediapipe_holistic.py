@@ -135,6 +135,7 @@ class MediapipeHolistic:
         f.close()
 
     def clear_logs(self):
+        self.frame_num = 0
         self.landmarks.clear()
         self.denormalized_landmarks.clear()
         self.landmarks = [header]
