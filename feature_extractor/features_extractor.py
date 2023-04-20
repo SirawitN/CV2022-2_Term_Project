@@ -1,9 +1,8 @@
 import cv2
-import os, time
 import imutils
+import os, time
 import numpy as np
-from hand_detection import MediapipeHand
-from pose_detection import MediapipePose
+from mediapipe_holistic import MediapipeHolistic
 # from imutils.video import VideoStream
 
 # Instraction: How to use this code
@@ -19,16 +18,8 @@ from pose_detection import MediapipePose
 current_dir = os.getcwd()
 resource_dir = os.path.join(current_dir, 'resources', 'CompVisionDataset1')
 
-mode = input("Which model do you want to use (hands or pose) ? :")
-
-if mode=='hands':
-    save_dir = os.path.join(current_dir, 'results', 'hands')
-    hand_detector = MediapipeHand()
-elif mode=='pose':
-    save_dir = os.path.join(current_dir, 'results', 'pose')
-    pose_detector = MediapipePose()
-else:
-    raise Exception("Invalid argument, please try again.")
+save_dir = os.path.join(current_dir, 'results')
+holistic_detector = MediapipeHolistic()
     
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
@@ -63,30 +54,13 @@ for file in files:
             while cap.isOpened():
                 success, image = cap.read()
                 if success:
-                    # frames += 1
-                    start_time = time.time()
-
-                    # fps = str(int(1/(new_frame_time-prev_frame_time)))
-                    # fps = str(int(cap.get(cv2.CAP_PROP_FPS)))
-
-                    # prev_frame_time = new_frame_time
                     # image = imutils.resize(image, height=240)
-                    
-                    if mode=='hands':
-                        processed_frame = hand_detector.process(image)
-                    else:
-                        processed_frame = pose_detector.process(image)
+                
+                    processed_frame, results = holistic_detector.process(image)
+                    frame_h, frame_w, _ = image.shape
+                    holistic_detector.save_landmarks(frame_w, frame_h, results)
 
-                    end_time = time.time()
-
-                    fps = int(1/(end_time-start_time))
-
-                    # processed_frame = image.copy()
-
-                    cv2.putText(processed_frame, str(fps), (5, 50),
-                                cv2.FONT_HERSHEY_SIMPLEX, 1, (100, 255, 0), 2, cv2.LINE_AA)
                     cv2.imshow('Processed frame', processed_frame)
-
                     if (cv2.waitKey(1) & 0xFF == ord('q')):
                         stop = True;
                         break
@@ -106,12 +80,9 @@ for file in files:
         if stop:
             break
         else:
-            if mode=='hands':
-                hand_detector.save(save_dir, file.replace(' - ', '_'))
-                hand_detector.clear_logs()
-            else:
-                pose_detector.save(save_dir, file.replace(' - ', '_'))
-                pose_detector.clear_logs()
+            holistic_detector.export_to_csv(save_dir, file[:-4])
+            holistic_detector.clear_logs()
+        
     else:
         raise Exception(f'An error occured, the {file_dir} doesn\'t exist.')
     
