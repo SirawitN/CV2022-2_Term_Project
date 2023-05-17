@@ -1,8 +1,10 @@
-resources/
 __pycache__
+
+resources/
 results/
 tmp/
-openpose/
+CV2022_2_TERM_PROJECT.egg-info/
+
 
 .history
 .checkpoints
