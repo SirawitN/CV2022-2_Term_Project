@@ -1,6 +1,6 @@
 __pycache__
 
-resources/
+feature_extractor/resources/
 results/
 tmp/
 CV2022_2_TERM_PROJECT.egg-info/

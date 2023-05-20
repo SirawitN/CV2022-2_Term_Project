@@ -7,6 +7,10 @@
 - คำในภาษาไทยจำนวน 24 คำ ได้แก่ `1.ฉัน, 2.เธอ, 3.เขา, 4.พวกเรา, 5.สวัสดี, 6.ชื่อ, 7.ผู้ชาย, 8.ผู้หญิง, 9.ความรัก, 10.ชอบ, 11.ไม่ชอบ, 12.ดีใจ, 13.เสียใจ, 14.โกรธ, 15.ร้องไห้, 16.ยาก, 17.ง่าย, 18.คิดถึง, 19.รองเท้า, 20.กางเกงยีนส์, 21.หมวก, 22.แว่นตา, 23.นาฬิกาข้อมือ, และ 24.ผ้าเช็ดหน้า`
 - การแสดงผลลัพธ์แบบ real-time
 
+<p align="center">
+<img src="/resources/readme/hand_sign_language.jpg">
+</p>
+
 
 ## Technical Challenges
 * การเลือกใช้วิธีการประมวลผลให้รองรับการทำงานแบบ real-time และ มีความถูกต้องในการทำงาน
@@ -33,5 +37,27 @@ Depth and Color Video (ScienceDirect, 24 May 2016)
 >> วิเคราะห์ภาษามือจำนวน 5 ท่าทางโดยการทำ Hand Landmark Extraction ด้วย Mediapipe Model และทดสอบการประมวลผลด้วย Recurrent Neural Network (RNN) Model จำนวน 3 ตัว ได้แก่ LSTM, BiLSTM, และ GRU
 
 ## Method and Results
+
+### Data Preparation
+
+### Application Workflow
+<p align="center">
+<img width="781" height="147" src="/resources/readme/workflow_diagram.png">
+</p>
+
+#### opencv
+
+#### mediapipe
+
+#### normalized
+
+#### keyframe
+
+#### LSTM Classification Model
+
+#### UI
+
+
+### Demonstration
 
 ## Discussion and Future Work
