@@ -1,7 +1,3 @@
-# IMPORTANT
-# USE NEW `Class_mapping.txt` FILE (class start at 0)
-
-
 import sys
 import random
 import string
@@ -109,7 +105,7 @@ def is_detecting_hand(landmarks_frame):
 
 if __name__ == "__main__":
     
-    mapping_file = sys.path[0] + '/../resources/Class_mapping.txt'
+    mapping_file = sys.path[0] + '/../resources/Class_mapping_start_with_0.txt'
     ctol = {}
     ltoc = {}
     with open(mapping_file, encoding='utf-8') as f:
