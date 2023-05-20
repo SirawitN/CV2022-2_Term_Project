@@ -114,8 +114,8 @@ if __name__ == "__main__":
             ctol[int(key)] = val
             ltoc[val] = int(key)
     
-    model = SimpleLSTM(input_dim=len(col_name), hidden_dim=256, classes=len(ctol))
-    model.load_state_dict(torch.load(sys.path[0] + '/../checkpoint/model_epoch_105.pt'))
+    model = SimpleLSTM(input_dim=len(col_name), hidden_dim=256, classes=len(ctol), leaky_relu=True)
+    model.load_state_dict(torch.load(sys.path[0] + '/../checkpoint/model_epoch_106_with_leaky_relu.pt'))
     model.to('cuda')
     
     inputStream = cv2.VideoCapture(0)
@@ -161,6 +161,7 @@ if __name__ == "__main__":
                         inputs = torch.from_numpy(inputs).float().to('cuda')
                         y_pred = predict(model, inputs)
                         label = ctol[y_pred[0]]
+                        
                         print(label)
                         
                         isDetected = True
@@ -180,9 +181,10 @@ if __name__ == "__main__":
                 cv2.destroyWindow("Live From Webcam")
                 break
             
-            
     except KeyboardInterrupt:
         print("Stream stopped")
+    except Exception as e:
+        print(e)
     inputStream.release()
 
     # data_df = pd.DataFrame(data=holistic_detector.landmarks[1:], columns=holistic_detector.landmarks[0])
