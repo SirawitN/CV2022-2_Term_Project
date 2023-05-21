@@ -74,6 +74,8 @@ class MediapipeHolistic:
         return frame, results
 
     def save_landmarks(self, frame_width, frame_height, results):
+        if (not results.pose_landmarks and not results.left_hand_landmarks and not results.right_hand_landmarks):
+            return
         self.frame_num += 1
 
         pose = np.array([[res.x, res.y] for res in results.pose_landmarks.landmark]).flatten(
