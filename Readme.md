@@ -39,25 +39,55 @@ Depth and Color Video (ScienceDirect, 24 May 2016)
 ## Method and Results
 
 ### Data Preparation
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เริ่มต้นจากการศึกษาท่าทางภาษามือและทำการคัดเลือกท่าที่จะนำมาใช้ในโครงการ โดยเลือกท่าทางที่มีลักษณะแตกต่างกันเพื่อให้มีความหลากหลาย ทั้งท่าทางที่ใช้ 1 และ 2 มือ ท่าที่มีการขยับแขนขึ้น-ลง ท่าที่มีการใช้ศีรษะประกอบการทำ
+[สอนภาษามือ - TK Channel](https://www.youtube.com/playlist?list=PL04-r7CQK5w9BPtNWXnAccIm0zdO31PDy)
+<p align="center">
+<img src="/resources/readme/hand_sign_language.jpg">
+</p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;แต่เนื่องจากข้อมูลที่สามารถนำมาใช้ในกระบวนการ train โปรแกรม Machine Learning Model นั้นมีจำนวนน้อย จึงได้มีการเก็บภาพของแต่ละท่าทางเพิ่ม ท่าละ 10 ภาพ
+<p align="center">
+<img src="/resources/readme/hand_sign.jpg">
+</p>
 
 ### Application Workflow
 <p align="center">
-<img width="781" height="147" src="/resources/readme/workflow_diagram.png">
+<img src="/resources/readme/workflow_diagram.png">
 </p>
 
-#### opencv
+#### OpenCV
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;รับข้อมูลจากกล้อง Webcam ผ่านการตั้งค่าด้วยไลบราลี่ OpenCV 
 
-#### mediapipe
+#### Mediapipe
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;เป็น open-source Machine Learning Platform เพื่อให้บริการเครื่องมือที่เกี่ยวข้องกับ Machine Learning เพื่อตอบสนองต่อการใช้งานด้านการ live หรือ streaming โดยในโครงการนี้ได้มีการเลือกใช้เครื่องมือที่มีชื่อว่า Mediapipe Holistic pipeline ทีมีการทำงานร่วมกันของ Mediapipe Pose, Face, และ Hand เพื่อทำหน้าที่ในการตรวจจับจุด landmark บริเวณตัว ใบหน้า และมือ ซึ่งในโครงการนี้จะเลือกใช้ข้อมูลจุด landmark ของบริเวณลำตัวและมือในการประมวลผล โดยจุด landmark บริเวณลำตัวและมือจะมีจำนวน 33 และ 21 จุดตามลำดับ
+<p align="center">
+<img src="/resources/readme/pose_landmarks.png">
+<img src="/resources/readme/hand_landmarks.png">
+</p>
 
-#### normalized
+#### Normalized
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ภายหลังการประมวลผลจุด landmark ด้วย Mediapipe จะได้ผลลัพธ์เป็นตำแหน่งของ landmark แต่ละจุด โดยถูก normalized ให้มีค่าอยู่ในช่วง ``[0.0, 1.0] ``ด้วยความกว้างและความสูงของรูปภาพ
 
-#### keyframe
+#### Keyframe
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ข้อมูลที่ได้จากการประมวลผลด้วย Mediapipe นั้นจะประกอบไปด้วยตำแหน่งของจุด landmark จำนวน 75 จุด โดยเป็นจุด landmark ของมือจำนวน 42 จุด โดยหากมีการตรวจจับตำแหน่งของมือได้ตั้งแต่ 1 ข้างขึ้นไปเป็นจำนวนมากกว่า 10 เฟรมติดต่อกัน จึงจะนับว่าเป็น keyframe และเริ่มการประมวลผล โดยจะหยุดการประมวลผลเมื่อตรวจจับตำแหน่งมือไม่ได้เป็นจำนวน 10 เฟรมขึ้นไป
 
 #### LSTM Classification Model
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model ที่เลือกใช้คือ Recurrent Neural Network (RNN) ที่ชื่อ Long Short-Term Memory (LSTM) โดยทำการแบ่ง dataset ออกเป็น train dataset 80% และ test dataset 20% โดยใช้ parameters ดังนี้
+```
+{
+  'input_dim': 50,
+  'hidden_dim': 256,
+  'num_layers': 2,
+  'dropout': 0.2,
+  'optimizer': 'AdamW' with learning rate = 1e-4
+  'scheduler': 'ReduceLROnPlateau'
+  'critirion': 'CrossEntropyLoss'
+}
+```
 
 #### UI
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;โปรแกรมใช้ภาษา Python ในการทำงานและใช้ package ที่ชื่อ [Gradio](https://gradio.app/) ในการทำ UI Components
 
 ### Demonstration
+
 
 ## Discussion and Future Work
