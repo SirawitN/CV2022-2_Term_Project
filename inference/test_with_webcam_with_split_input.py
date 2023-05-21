@@ -108,7 +108,8 @@ if __name__ == "__main__":
     
     time1 = time.time()
     
-    mapping_file = sys.path[0] + '/../resources/Class_mapping_start_with_0.txt'
+    # mapping_file = sys.path[0] + '/../resources/Class_mapping_start_with_0.txt'
+    mapping_file = sys.path[0] + '/../resources/Class_mapping_without_confuse.txt'
     ctol = {}
     ltoc = {}
     with open(mapping_file, encoding='utf-8') as f:
@@ -120,7 +121,7 @@ if __name__ == "__main__":
     time2 = time.time()
     
     model = SimpleLSTM(input_dim=len(col_name), hidden_dim=256, classes=len(ctol), leaky_relu=True)
-    model.load_state_dict(torch.load(sys.path[0] + '/../checkpoint/model_epoch_106_with_leaky_relu.pt'))
+    model.load_state_dict(torch.load(sys.path[0] + '/../checkpoint/model_epoch_200_without_confuse.pt'))
     model.to('cuda')
     
     time3 = time.time()
