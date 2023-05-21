@@ -105,6 +105,7 @@ def is_detecting_hand(landmarks_frame):
     
 
 if __name__ == "__main__":
+    font = cv2.FONT_HERSHEY_SIMPLEX
     
     time1 = time.time()
     
@@ -153,6 +154,16 @@ if __name__ == "__main__":
                 
                 last_frame = holistic_detector.landmarks[-1]
                 
+                if isDetecting:
+                    # inserting text on video
+                    cv2.putText(processed_frame, 
+                                'DETECTING', 
+                                (INPUT_WIDTH - 200, 50), 
+                                font, 1, 
+                                (0, 0, 255), 
+                                2, 
+                                cv2.LINE_4)
+
                 if is_detecting_hand(last_frame):
                     detecting_frame_count += 1
                     not_detecting_frame_count = 0
