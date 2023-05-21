@@ -92,7 +92,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model ที่เลือกใช้คือ Recurrent Neural Network (RNN) ที่ชื่อ Long Short-Term Memory (LSTM) มี architecture ดังรูป  
 <p align="center">  
-<img src="/resources/readme/model_architecture.jpg">  
+<img src="/resources/readme/model_architecture.png">  
 </p>  
 โดยใช้ parameters ดังนี้  
 
