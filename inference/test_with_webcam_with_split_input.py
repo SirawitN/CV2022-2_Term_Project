@@ -45,7 +45,8 @@ def get_random_string(length):
 
 def predict(model, x):
     y_pred = model(x)
-    return y_pred.argmax(dim=1).tolist()
+    # return y_pred.argmax(dim=1).tolist()
+    return y_pred.argsort(descending=True).cpu().numpy(), y_pred.cpu().detach().numpy()
 
 def set_res(cap, x,y):
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(x))
@@ -105,6 +106,8 @@ def is_detecting_hand(landmarks_frame):
 
 if __name__ == "__main__":
     
+    time1 = time.time()
+    
     mapping_file = sys.path[0] + '/../resources/Class_mapping_start_with_0.txt'
     ctol = {}
     ltoc = {}
@@ -114,14 +117,25 @@ if __name__ == "__main__":
             ctol[int(key)] = val
             ltoc[val] = int(key)
     
+    time2 = time.time()
+    
     model = SimpleLSTM(input_dim=len(col_name), hidden_dim=256, classes=len(ctol), leaky_relu=True)
     model.load_state_dict(torch.load(sys.path[0] + '/../checkpoint/model_epoch_106_with_leaky_relu.pt'))
     model.to('cuda')
     
+    time3 = time.time()
+    
     inputStream = cv2.VideoCapture(0)
-    processed_frames = []
     set_res(inputStream, INPUT_WIDTH, INPUT_HEIGHT)
+    time4 = time.time()
     holistic_detector = MediapipeHolistic()
+    
+    time5 = time.time()
+    
+    print("time2 - time1: ", time2 - time1)
+    print("time3 - time2: ", time3 - time2)
+    print("time4 - time3: ", time4 - time3)
+    print("time5 - time4: ", time5 - time4)
     
     isDetecting = False
     detecting_frame_count = 0
@@ -132,6 +146,7 @@ if __name__ == "__main__":
             success, videoFrame = inputStream.read()
             # videoFrame empty case handler
             if success:
+                height, width, _ = videoFrame.shape
                 processed_frame, results = holistic_detector.process(videoFrame)
                 holistic_detector.save_landmarks(INPUT_WIDTH, INPUT_HEIGHT, results)
                 
@@ -159,10 +174,12 @@ if __name__ == "__main__":
                         inputs = sample_data(processed_data)
                         inputs = np.expand_dims(inputs, axis=0)
                         inputs = torch.from_numpy(inputs).float().to('cuda')
-                        y_pred = predict(model, inputs)
-                        label = ctol[y_pred[0]]
-                        
-                        print(label)
+                        y_pred, prop = predict(model, inputs)
+                        # print("here -> ", y_pred[0])
+                        # print("here2 -> ", labels)
+                        for i in range(3):
+                            pred_idx = y_pred[0][i].item()
+                            print("Predicted: ", ctol[pred_idx], " with probability: ", prop[0][pred_idx].item())
                         
                         isDetected = True
                     isDetecting = False
@@ -170,7 +187,6 @@ if __name__ == "__main__":
                 # print("isDetecting: ", isDetecting)
                     
                 cv2.imshow("Live From Webcam", processed_frame)
-                processed_frames.append(processed_frame)
                 
             else:
                 print("Cannot Open Webcam, hw problem?")
