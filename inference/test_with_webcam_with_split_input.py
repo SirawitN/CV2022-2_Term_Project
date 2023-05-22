@@ -8,10 +8,8 @@ import pandas as pd
 
 import cv2
 from feature_extractor.mediapipe_holistic import MediapipeHolistic
-
 from lstm import SimpleLSTM
-
-import time
+from PIL import Image, ImageFont, ImageDraw
 
 # constant varaible
 INPUT_WIDTH = 1280
@@ -40,7 +38,6 @@ for hidx in HAND_INDEXS:
 def get_random_string(length):
     # With combination of lower and upper case
     result_str = ''.join(random.choice(string.ascii_letters) for i in range(length))
-    # print random string
     return result_str
 
 def predict(model, x):
@@ -101,13 +98,28 @@ def is_detecting_hand(landmarks_frame):
         return True
     return False
 
-# def get_prediction(raw_df):
-    
+
+predict_prob = [None]*3
+colors = [(245, 117, 16), (117, 245, 16), (16, 117, 245)]
+angsana_path = './resources/angsana.ttc'
+angsana_font = ImageFont.truetype(angsana_path, 40)
+
+def prob_vis(processed_frame):
+    frame_pil = Image.fromarray(processed_frame)
+    draw = ImageDraw.Draw(frame_pil)
+
+    if predict_prob[0] is not None:
+        for i in range(len(predict_prob)):
+            word, prob = predict_prob[i]
+            prob = round(prob, 2)
+
+            shape = [(5, 85+i*50), (50+int(prob*100), 130+i*50)]
+            draw.rectangle(shape, fill=colors[i])
+            draw.text((5, 85+i*50), word, font=angsana_font, fill=(0, 0, 0))
+    return np.array(frame_pil)
 
 if __name__ == "__main__":
     font = cv2.FONT_HERSHEY_SIMPLEX
-    
-    time1 = time.time()
     
     # mapping_file = sys.path[0] + '/../resources/Class_mapping_start_with_0.txt'
     mapping_file = sys.path[0] + '/../resources/Class_mapping_without_confuse.txt'
@@ -119,25 +131,13 @@ if __name__ == "__main__":
             ctol[int(key)] = val
             ltoc[val] = int(key)
     
-    time2 = time.time()
-    
     model = SimpleLSTM(input_dim=len(col_name), hidden_dim=256, classes=len(ctol), leaky_relu=True)
     model.load_state_dict(torch.load(sys.path[0] + '/../checkpoint/model_epoch_200_without_confuse.pt'))
     model.to('cuda')
     
-    time3 = time.time()
-    
     inputStream = cv2.VideoCapture(0)
     set_res(inputStream, INPUT_WIDTH, INPUT_HEIGHT)
-    time4 = time.time()
     holistic_detector = MediapipeHolistic()
-    
-    time5 = time.time()
-    
-    print("time2 - time1: ", time2 - time1)
-    print("time3 - time2: ", time3 - time2)
-    print("time4 - time3: ", time4 - time3)
-    print("time5 - time4: ", time5 - time4)
     
     isDetecting = False
     detecting_frame_count = 0
@@ -191,6 +191,7 @@ if __name__ == "__main__":
                         # print("here2 -> ", labels)
                         for i in range(3):
                             pred_idx = y_pred[0][i].item()
+                            predict_prob[i] = (ctol[pred_idx], prop[0][pred_idx].item())
                             print("Predicted: ", ctol[pred_idx], " with probability: ", prop[0][pred_idx].item())
                         
                         isDetected = True
@@ -198,6 +199,7 @@ if __name__ == "__main__":
                     
                 # print("isDetecting: ", isDetecting)
                     
+                processed_frame = prob_vis(processed_frame)
                 cv2.imshow("Live From Webcam", processed_frame)
                 
             else:
