@@ -12,10 +12,10 @@ from lstm import SimpleLSTM
 from PIL import Image, ImageFont, ImageDraw
 
 # constant varaible
-# INPUT_WIDTH = 1280
-# INPUT_HEIGHT = 720
-INPUT_WIDTH = 1920
-INPUT_HEIGHT = 1080
+INPUT_WIDTH = 1280
+INPUT_HEIGHT = 720
+# INPUT_WIDTH = 1920
+# INPUT_HEIGHT = 1080
 HAND_INDEXS = np.array([0,1,4,5,8,9,12,13,16,17,20]) # get just the tip of finger
 # POSE_INDEXS = np.array([0,11, 12, 13, 14, 15, 16, 23, 24]) # get just the upper body of pose estimated
 POSE_INDEXS = np.array([0,11, 12]) # get just the upper body of pose estimated
