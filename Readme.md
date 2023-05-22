@@ -61,7 +61,8 @@
 <img src="/resources/readme/workflow_diagram.png">
 </p>
 
-#### Data Split  
+#### Data Split
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ทำการแบ่ง dataset ออกเป็น train dataset 80% และ test dataset 20% โดยให้อัตราส่วนของท่าภาษามือใน train และ test set เท่ากัน
 
 #### OpenCV
@@ -78,23 +79,27 @@
 </p>
 
 #### Data Preprocess
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ภายหลังการประมวลผลจุด landmark ด้วย Mediapipe จะได้ผลลัพธ์เป็นตำแหน่งของ landmark แต่ละจุด โดยถูก normalized ให้มีค่าอยู่ในช่วง `[0.0, 1.0] `ด้วยความกว้างและความสูงของรูปภาพ  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;หลังจาก normalize ตำแหน่ง keypoint ของแต่ละ frame แล้ว ทุกตำแหน่งจะถูกลบด้วยตำแหน่งของจมูกจาก Mediapipe Pose (ตำแหน่งที่ 0) เพื่อให้จุด `(0,0)` ของ keypoint อยู่ที่จมูกแทน เพื่อให้ invariant ต่อตำแหน่งของผู้ทำภาษามือใน frame  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;จากนั้น เราจะนำความกว้างของไหล่ (ระยะห่างระหว่าง keypoint ตำแหน่งที่ 11 และ 12 จาก Mediapipe Pose) มาหารจาก keypoint ทุกตำแหน่ง เพื่อเป็นการ normalize ตำแหน่งของ และเพื่อให้ invariant ต่อขนาดของผู้ทำภาษามือใน frame
-
-#### Keyframe
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ข้อมูลที่ได้จากการประมวลผลด้วย Mediapipe นั้นจะประกอบไปด้วยตำแหน่งของจุด landmark จำนวน 75 จุด โดยเป็นจุด landmark ของมือจำนวน 42 จุด โดยหากมีการตรวจจับตำแหน่งของมือได้ตั้งแต่ 1 ข้างขึ้นไปเป็นจำนวนมากกว่า 10 เฟรมติดต่อกัน จึงจะนับว่าเป็น keyframe และเริ่มการประมวลผล โดยจะหยุดการประมวลผลเมื่อตรวจจับตำแหน่งมือไม่ได้เป็นจำนวน 10 เฟรมขึ้นไป
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ช่วงของเฟรมทั้งหมดที่ถูกประมวลผล จะถูกกรองเอา frame ที่ไม่ติด keypoint ของมือเลยออก จากนั้น frame ที่ถูกกรองแล้วจะถูกนำไป sampling มาเพียง 30 frame โดยใช้ระยะห่างเท่า ๆ กัน (ใช้ `np.linspace`)
+- Normalization
+  > ภายหลังการประมวลผลจุด landmark ด้วย Mediapipe จะได้ผลลัพธ์เป็นตำแหน่งของ landmark แต่ละจุด โดยถูก normalized ให้มีค่าอยู่ในช่วง `[0.0, 1.0] `ด้วยความกว้างและความสูงของรูปภาพ
+- Keypoint Filtration
+  > ข้อมูลที่ได้จากการประมวลผลด้วย Mediapipe นั้นจะประกอบไปด้วยตำแหน่งของจุด landmark จำนวน 75 จุด โดยเป็นจุด landmark ของ pose 33 จุด และเป็นจุด landmark ของมือ 2 ข้างจำนวน 42 จุด 
+- Create Translation Invariant
+  > หลังจาก normalize ตำแหน่ง keypoint ของแต่ละ frame แล้ว ทุกตำแหน่งจะถูกลบด้วยตำแหน่งของจมูกจาก Mediapipe Pose (ตำแหน่งที่ 0) เพื่อให้จุด `(0,0)` ของ keypoint อยู่ที่จมูกแทน เพื่อให้ invariant ต่อตำแหน่งของผู้ทำภาษามือใน frame
+- Create Scale Invariant
+  > เราจะนำความกว้างของไหล่ (ระยะห่างระหว่าง keypoint ตำแหน่งที่ 11 และ 12 จาก Mediapipe Pose) มาหารจาก keypoint ทุกตำแหน่ง เพื่อเป็นการ normalize ตำแหน่งของ และเพื่อให้ invariant ต่อขนาดของผู้ทำภาษามือใน frame
+- Starting and Ending of Sign Language
+  > โดยหากมีการตรวจจับตำแหน่งของมือ (จุดใดหนึ่งของ landmark ของมือปรากฎ) ได้ตั้งแต่ 1 ข้างขึ้นไปเป็นจำนวนมากกว่า 10 เฟรมติดต่อกัน จึงจะนับว่าเป็น keyframe และเริ่มการประมวลผล โดยจะหยุดการประมวลผลเมื่อตรวจจับตำแหน่งมือไม่ได้เป็นจำนวน 10 เฟรมขึ้นไป
+- Keyframe Sampling
+  > ช่วงของเฟรมทั้งหมดที่ถูกประมวลผล จะถูกกรองเอา frame ที่ไม่ติด keypoint ของมือเลยออก จากนั้น frame ที่ถูกกรองแล้วจะถูกนำไป sampling มาเพียง 30 frame โดยใช้ระยะห่างเท่า ๆ กัน (ใช้ `np.linspace`)
 
 #### LSTM Classification Model
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model ที่เลือกใช้คือ Recurrent Neural Network (RNN) ที่ชื่อ Long Short-Term Memory (LSTM) มี architecture ดังรูป  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Model ที่เลือกใช้คือ Recurrent Neural Network (RNN) ที่ชื่อ Long Short-Term Memory (LSTM) มี architecture ดังรูป
+
 <p align="center">  
 <img src="/resources/readme/model_architecture.jpg">  
 </p>  
-โดยใช้ parameters ดังนี้  
+โดยใช้ parameters ดังนี้
 
 ```
 {
