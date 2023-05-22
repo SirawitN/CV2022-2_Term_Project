@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import random
 import string
 
@@ -12,8 +12,10 @@ from lstm import SimpleLSTM
 from PIL import Image, ImageFont, ImageDraw
 
 # constant varaible
-INPUT_WIDTH = 1280
-INPUT_HEIGHT = 720
+# INPUT_WIDTH = 1280
+# INPUT_HEIGHT = 720
+INPUT_WIDTH = 1920
+INPUT_HEIGHT = 1080
 HAND_INDEXS = np.array([0,1,4,5,8,9,12,13,16,17,20]) # get just the tip of finger
 # POSE_INDEXS = np.array([0,11, 12, 13, 14, 15, 16, 23, 24]) # get just the upper body of pose estimated
 POSE_INDEXS = np.array([0,11, 12]) # get just the upper body of pose estimated
@@ -93,8 +95,10 @@ def sample_data(df, len_sample=30):
     return df.iloc[sample_idx].to_numpy()
 
 def is_detecting_hand(landmarks_frame):
+    if(len(landmarks_frame) <= 1):
+        return False
     landmarks_np = np.array(landmarks_frame[1:])
-    if (landmarks_np[HAND_COLUMN_INDEXES] > 0).sum() > 0:
+    if (landmarks_np[HAND_COLUMN_INDEXES]).sum() > 0:
         return True
     return False
 
@@ -215,7 +219,10 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Stream stopped")
     except Exception as e:
-        print(e)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        # print(e)
     inputStream.release()
 
     # data_df = pd.DataFrame(data=holistic_detector.landmarks[1:], columns=holistic_detector.landmarks[0])
