@@ -1,11 +1,11 @@
 __pycache__
+venv/
 
 feature_extractor/resources/
 results/
 resources/CompVisionDataset/
 tmp/
 CV2022_2_TERM_PROJECT.egg-info/
-
 
 .history
 .checkpoints

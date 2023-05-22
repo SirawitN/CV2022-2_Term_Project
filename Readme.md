@@ -25,22 +25,22 @@
 
 - Recent Advances in Video-Based Human Action Recognition using Deep Learning: A Review
   (IEEE Xplore, 03 July 2017)
-  > > ศึกษาการประยุกต์ใช้ Deep Learning ในการวิเคราะห์ท่าทางการเคลื่อนไหวจากภาพใน 3 มุมมอง ได้แก่ 1.Single Viewpoint 2.Multiple Viewpoint 3.RGB-Depth (ใช้อุปกรณ์พิเศษ เช่น Microsoft Kinect)
+  > ศึกษาการประยุกต์ใช้ Deep Learning ในการวิเคราะห์ท่าทางการเคลื่อนไหวจากภาพใน 3 มุมมอง ได้แก่ 1.Single Viewpoint 2.Multiple Viewpoint 3.RGB-Depth (ใช้อุปกรณ์พิเศษ เช่น Microsoft Kinect)
 - SubUNets: End-To-End Hand Shape and Continuous Sign Language Recognition (IEEE Xplore, 25 December 2017)
-  > > ศึกษาการประยุกต์ใช้ Convolutional Neural Network และ LSTM Deep Learning Model ในการวิเคราะห์ลำดับของภาษามือที่มีความต่อเนื่องกัน
+  > ศึกษาการประยุกต์ใช้ Convolutional Neural Network และ LSTM Deep Learning Model ในการวิเคราะห์ลำดับของภาษามือที่มีความต่อเนื่องกัน
 - Dynamic Hand Gesture Recognition Using Computer Vision and Neural Networks (IEEE Xplore, 11 November 2018)
-  > > ประยุกต์ใช้ Image Processing ในการ pre-process ภาพ เช่น Gaussian Mixture-based Background/Foreground Segmentation, Image Thresholding เพื่อสร้าง Motion History Image และนำไปประมวลผลด้วย Neural Network Model
+  > ประยุกต์ใช้ Image Processing ในการ pre-process ภาพ เช่น Gaussian Mixture-based Background/Foreground Segmentation, Image Thresholding เพื่อสร้าง Motion History Image และนำไปประมวลผลด้วย Neural Network Model
 - Video-based isolated hand sign language recognition using a deep cascaded model (Springer
   Link, 02 June 2020)
-  > > วิเคราะห์ภาษามือด้วย Deep Cascaded Model 3 ส่วน ได้แก่ 1. Single Shot Detector (SSD) ในการทำ Hand Detection 2.Convolutional Neural Network (CNN) เพื่อทำ Feature Extraction และ 3.Long Shot Term Memory (LSTM) เพื่อเรียนรู้และประมวลผลความหมายของท่าทางต่างๆ
+  > วิเคราะห์ภาษามือด้วย Deep Cascaded Model 3 ส่วน ได้แก่ 1. Single Shot Detector (SSD) ในการทำ Hand Detection 2.Convolutional Neural Network (CNN) เพื่อทำ Feature Extraction และ 3.Long Shot Term Memory (LSTM) เพื่อเรียนรู้และประมวลผลความหมายของท่าทางต่างๆ
 - Hand Gesture Recognition for Thai Sign Language in Complex Background Using Fusion of
   Depth and Color Video (ScienceDirect, 24 May 2016)
-  > > วิเคราะห์ภาษามือแบบ Fingerspelling ด้วยการประยุกต์ใช้ Image Processing เช่น Image Segmentation, HOG Feature Extraction ร่วมกับอุปกรณ์พิเศษ Microsoft Kinect และประมวลผลด้วย Neural Network Model
+  > วิเคราะห์ภาษามือแบบ Fingerspelling ด้วยการประยุกต์ใช้ Image Processing เช่น Image Segmentation, HOG Feature Extraction ร่วมกับอุปกรณ์พิเศษ Microsoft Kinect และประมวลผลด้วย Neural Network Model
 - Thai Sign Language Recognition Using 3D Convolutional Neural Networks (ACL Digital Library, 27 July 2019)
-  > > วิเคราะห์ภาษามือจำนวน 64 ท่าทางโดยการวิเคราะห์ข้อมูลจากอุปกรณ์ Microsoft Kinect ได้แก่ Depth, Color, Skeleton, Hand Shapes, Body Movement และประมวลผลด้วย 3D Convolutional Neural Network Model
+  > วิเคราะห์ภาษามือจำนวน 64 ท่าทางโดยการวิเคราะห์ข้อมูลจากอุปกรณ์ Microsoft Kinect ได้แก่ Depth, Color, Skeleton, Hand Shapes, Body Movement และประมวลผลด้วย 3D Convolutional Neural Network Model
 - Thai Sign Language Recognition: an Application of Deep Neural Network
   (IEEE Xplore, 11 May 2021)
-  > > วิเคราะห์ภาษามือจำนวน 5 ท่าทางโดยการทำ Hand Landmark Extraction ด้วย Mediapipe Model และทดสอบการประมวลผลด้วย Recurrent Neural Network (RNN) Model จำนวน 3 ตัว ได้แก่ LSTM, BiLSTM, และ GRU
+  > วิเคราะห์ภาษามือจำนวน 5 ท่าทางโดยการทำ Hand Landmark Extraction ด้วย Mediapipe Model และทดสอบการประมวลผลด้วย Recurrent Neural Network (RNN) Model จำนวน 3 ตัว ได้แก่ LSTM, BiLSTM, และ GRU
 
 ## Method and Results
 
@@ -91,7 +91,7 @@
 - Create Scale Invariant
   > เราจะนำความกว้างของไหล่ (ระยะห่างระหว่าง keypoint ตำแหน่งที่ 11 และ 12 จาก Mediapipe Pose) มาหารจาก keypoint ทุกตำแหน่ง เพื่อเป็นการ normalize ตำแหน่งของ และเพื่อให้ invariant ต่อขนาดของผู้ทำภาษามือใน frame
 - Starting and Ending of Sign Language
-  > โดยหากมีการตรวจจับตำแหน่งของมือ (จุดใดหนึ่งของ landmark ของมือปรากฎ) ได้ตั้งแต่ 1 ข้างขึ้นไปเป็นจำนวนมากกว่า 10 เฟรมติดต่อกัน จึงจะนับว่าเป็น keyframe และเริ่มการประมวลผล โดยจะหยุดการประมวลผลเมื่อตรวจจับตำแหน่งมือไม่ได้เป็นจำนวน 10 เฟรมขึ้นไป
+  > โดยหากมีการตรวจจับตำแหน่งของมือ (จุดใดหนึ่งของ landmark ของมือปรากฎ) ได้ตั้งแต่ 1 ข้างขึ้นไปเป็นจำนวนมากกว่า 10 เฟรมติดต่อกัน จึงจะนับว่าเริ่มทำ sign language และเริ่มการประมวลผล โดยจะหยุดการประมวลผลเมื่อตรวจจับตำแหน่งมือไม่ได้เป็นจำนวน 10 เฟรมขึ้นไป
 - Keyframe Sampling
   > ช่วงของเฟรมทั้งหมดที่ถูกประมวลผล จะถูกกรองเอา frame ที่ไม่ติด keypoint ของมือเลยออก จากนั้น frame ที่ถูกกรองแล้วจะถูกนำไป sampling มาเพียง 30 frame โดยใช้ระยะห่างเท่า ๆ กัน (ใช้ `np.linspace`)
 
@@ -118,3 +118,21 @@
 ### Demonstration
 
 ## Discussion and Future Work
+
+## Installations
+
+#### 1. Setup Enviroment
+  - Create virtual enviroment  `python -m venv venv`
+
+  - activate the created enviroment  `source venv\Scripts\activate`
+
+#### 2. Install dependecies
+  - `pip install requirements.txt`
+  - `pip install torch_requirements.txt`
+
+#### 3. Linking module path
+  - `pip install -e .`
+  
+#### 4. Test the program
+  - `cd inference/`
+  - `python test_with_webcam_with_split_input.py`
