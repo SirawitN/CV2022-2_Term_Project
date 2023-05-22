@@ -116,7 +116,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;โปรแกรมใช้ภาษา Python ในการทำงานและใช้ฟังก์ชัน imshow ของไลบราลี่ OpenCV ในการแสดงผล
 
 ### Demonstration
-[![Alt text](https://img.youtube.com/vi/ATcM_kNgbcM/0.jpg)](https://www.youtube.com/watch?v=ATcM_kNgbcM&list=PL04-r7CQK5w9BPtNWXnAccIm0zdO31PDy&index=1&ab_channel=NMPChannel)
+[![Alt text](https://img.youtube.com/vi/UdtASV0YaKU/0.jpg)](https://youtu.be/UdtASV0YaKU)
 
 ## Discussion and Future Work
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;โปรแกรมในปัจจุบันมีความแม่นยำในการอยู่ที่ 84% โดยมีข้อจำกัดในการทำงาน ได้แก่ 
