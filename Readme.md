@@ -113,7 +113,7 @@
 ```
 #### UI
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;โปรแกรมใช้ภาษา Python ในการทำงานและใช้ package ที่ชื่อ [Gradio](https://gradio.app/) ในการทำ UI Components
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;โปรแกรมใช้ภาษา Python ในการทำงานและใช้ฟังก์ชัน imshow ของไลบราลี่ OpenCV ในการแสดงผล
 
 ### Demonstration
 
